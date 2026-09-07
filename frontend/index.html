@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Result Tracker — Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- ============== LOGIN ============== -->
+  <div id="login-screen">
+    <div class="login-card">
+      <div class="login-brand"><span class="dot"></span><span>Result Tracker</span></div>
+      <div class="panel">
+        <h2 style="font-size:15px;margin-bottom:2px;">Admin sign in</h2>
+        <p class="text-dim" style="margin-bottom:20px;">CHARUSAT result portal — control panel</p>
+        <form id="login-form">
+          <div class="field">
+            <label>Username</label>
+            <input type="text" id="login-username" autocomplete="username" autofocus />
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input type="password" id="login-password" autocomplete="current-password" />
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" id="login-submit">Sign in</button>
+          <p class="error-text hidden" id="login-error"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== APP SHELL ============== -->
+  <div id="app-shell" class="hidden">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="name"><span class="dot"></span>Result Tracker</div>
+        <div class="sub">CHARUSAT admin console</div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-label">Main</div>
+        <button class="nav-item" data-page="overview">Overview</button>
+        <button class="nav-item" data-page="results">Results</button>
+        <button class="nav-item" data-page="crawler">Crawler</button>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Communication</div>
+        <button class="nav-item" data-page="telegram">Telegram</button>
+        <button class="nav-item" data-page="notifications">Notifications</button>
+        <button class="nav-item" data-page="subscribers">Subscribers</button>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">System</div>
+        <button class="nav-item" data-page="logs">Logs</button>
+        <button class="nav-item" data-page="settings">Settings</button>
+        <button class="nav-item" data-page="admins">Admins</button>
+        <button class="nav-item" data-page="health">Health</button>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Account</div>
+        <button class="nav-item" data-page="profile">Profile</button>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-ghost" id="logout-btn">Log out</button>
+      </div>
+    </aside>
+
+    <div class="main-col">
+      <header class="topbar">
+        <button class="btn btn-ghost menu-toggle" id="menu-toggle" type="button" aria-label="Open navigation"
+          aria-expanded="false">
+          ☰
+        </button>
+        <h1 id="page-title">Overview</h1>
+        <div class="topbar-right">
+          <span id="topbar-user"></span>
+        </div>
+      </header>
+      <main id="page-content"></main>
+    </div>
+  </div>
+
+  <div id="sidebar-overlay"></div>
+
+  <div id="modal-root"></div>
+  <div id="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>

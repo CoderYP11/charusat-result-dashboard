@@ -1,0 +1,25 @@
+[Unit]
+Description=CHARUSAT Result Tracker — Admin Dashboard API
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=charusat
+Group=charusat
+
+WorkingDirectory=/opt/charusat-dashboard/backend
+EnvironmentFile=/opt/charusat-dashboard/backend/.env
+
+ExecStart=/opt/charusat-dashboard/backend/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
+
+Restart=on-failure
+RestartSec=5
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

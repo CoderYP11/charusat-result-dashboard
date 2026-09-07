@@ -1,0 +1,8 @@
+# Dashboard-specific additions. PostgreSQL access (psycopg) and
+# python-dotenv are already in the repo-root requirements.txt and are
+# reused as-is — not duplicated here.
+fastapi
+uvicorn[standard]
+python-jose[cryptography]
+python-multipart
+bcrypt
