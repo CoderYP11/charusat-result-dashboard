@@ -5,7 +5,8 @@
 // service on the same origin (see deploy/nginx.conf.example). Only
 // change this if the API is genuinely served from a different origin,
 // and add that origin to CORS_ORIGINS in backend/.env.
-const API_BASE = "http://127.0.0.1:8000/api";
+const API_BASE = "/api";
+
 
 // ============================================================
 // STATE
