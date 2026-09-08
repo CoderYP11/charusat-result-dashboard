@@ -336,8 +336,8 @@ async function renderResults() {
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Exam</th><th>Institute</th><th>Degree</th><th>Semester</th><th>First seen</th><th>Last seen</th><th>Notified</th></tr></thead>
-        <tbody id="results-body"><tr class="empty-row"><td colspan="7">Loading…</td></tr></tbody>
+        <thead><tr><th>Exam</th><th>Institute</th><th>Degree</th><th>Semester</th><th>Discovered</th><th>Notified</th></tr></thead>
+        <tbody id="results-body"><tr class="empty-row"><td colspan="6">Loading…</td></tr></tbody>
       </table>
     </div>
     <div class="pagination">
@@ -387,12 +387,11 @@ async function renderResults() {
           <td class="text-muted">${escapeHtml(r.degree_name || r.degree_id)}</td>
           <td class="mono text-muted">${escapeHtml(r.semester_id)}</td>
           <td class="mono tab-num text-muted">${fmtDate(r.first_seen_at)}</td>
-          <td class="mono tab-num text-muted">${fmtDate(r.last_seen_at)}</td>
           <td class="mono tab-num">${r.notified_count}${r.pending_count ? ` <span class="text-dim">(+${r.pending_count} pending)</span>` : ""}</td>
         </tr>`,
             )
             .join("")
-        : `<tr class="empty-row"><td colspan="7">No results match this filter.</td></tr>`;
+        : `<tr class="empty-row"><td colspan="6">No results match this filter.</td></tr>`;
       document.getElementById("results-count").textContent =
         `${d.total} total · showing ${resultsOffset + 1}–${Math.min(resultsOffset + RESULTS_LIMIT, d.total)}`;
     } catch (e) {
