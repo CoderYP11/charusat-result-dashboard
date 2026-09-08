@@ -5,18 +5,17 @@ Wants=postgresql.service
 
 [Service]
 Type=simple
-User=charusat
-Group=charusat
+User=azureuser
+Group=azureuser
 
-WorkingDirectory=/opt/charusat-result-tracker
-EnvironmentFile=/opt/charusat-result-tracker/.env
+WorkingDirectory=/home/azureuser/charusat-result-tracker
+EnvironmentFile=/home/azureuser/charusat-result-tracker/.env
 
-ExecStart=/opt/charusat-result-tracker/backend/venv/bin/python3 notification_worker.py
+ExecStart=/home/azureuser/charusat-result-tracker/.venv/bin/python notification_worker.py
 
 Restart=on-failure
 RestartSec=10
 
-# Hardening
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=full

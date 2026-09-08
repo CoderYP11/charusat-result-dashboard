@@ -5,18 +5,17 @@ Wants=postgresql.service
 
 [Service]
 Type=simple
-User=charusat
-Group=charusat
+User=azureuser
+Group=azureuser
 
-WorkingDirectory=/opt/charusat-dashboard/backend
-EnvironmentFile=/opt/charusat-dashboard/backend/.env
+WorkingDirectory=/home/azureuser/charusat-result-dashboard/backend
+EnvironmentFile=/home/azureuser/charusat-result-dashboard/backend/.env
 
-ExecStart=/opt/charusat-dashboard/backend/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
+ExecStart=/home/azureuser/charusat-result-dashboard/backend/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
 
 Restart=on-failure
 RestartSec=5
 
-# Hardening
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=full
