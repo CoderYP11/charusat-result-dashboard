@@ -298,22 +298,19 @@ def trigger_crawler_run(current=Depends(get_current_admin)):
             detail="A crawl run is already in progress",
         )
 
-    # The dashboard only triggers the existing crawler.
-    # crawl_results.py owns the PostgreSQL advisory lock, so the
-    # scheduler and manual trigger cannot run crawls concurrently.
+    # Request the existing crawler.service to perform a manual crawl.
+    # The crawler scheduler consumes this flag and runs the crawl
+    # inside the systemd-managed crawler process.
     try:
-        subprocess.Popen(
-            [sys.executable, "crawl_results.py"],
-            cwd=str(config.REPO_ROOT),
-            env=os.environ.copy(),
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            start_new_session=True,
+        db.set_setting(
+            "crawler.manual_trigger",
+            True,
+            updated_by=current["username"],
         )
-    except OSError as exc:
+    except Exception as exc:
         raise HTTPException(
             status_code=503,
-            detail=f"Failed to start crawler: {exc}",
+            detail=f"Failed to trigger crawler: {exc}",
         ) from exc
 
     db.log_activity(
