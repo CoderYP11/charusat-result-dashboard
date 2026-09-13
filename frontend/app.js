@@ -26,21 +26,69 @@ async function api(path, options = {}) {
     "Content-Type": "application/json",
     ...(options.headers || {}),
   };
-  if (state.token) headers["Authorization"] = `Bearer ${state.token}`;
 
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  if (state.token) {
+    headers["Authorization"] = `Bearer ${state.token}`;
+  }
 
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers,
+  });
+
+  const isJson = res.headers
+    .get("content-type")
+    ?.includes("application/json");
+
+  const body = isJson
+    ? await res.json().catch(() => null)
+    : null;
+
+  /*
+   * Login 401 is NOT a session-expiry.
+   * It means the supplied username/password are invalid.
+   */
+  if (res.status === 401 && path === "/auth/login") {
+    throw new Error(
+      typeof body?.detail === "string"
+        ? body.detail
+        : "Invalid username or password",
+    );
+  }
+
+  /*
+   * 401 on an authenticated API request means
+   * the existing session/token has expired or is invalid.
+   */
   if (res.status === 401) {
     logout();
     throw new Error("Session expired — please sign in again");
   }
 
-  const isJson = res.headers.get("content-type")?.includes("application/json");
-  const body = isJson ? await res.json().catch(() => null) : null;
-
   if (!res.ok) {
-    throw new Error(body?.detail || `Request failed (${res.status})`);
+    let message = `Request failed (${res.status})`;
+
+    if (typeof body?.detail === "string") {
+      message = body.detail;
+    } else if (Array.isArray(body?.detail)) {
+      message = body.detail
+        .map((item) => {
+          if (typeof item === "string") return item;
+
+          const field = Array.isArray(item?.loc)
+            ? item.loc[item.loc.length - 1]
+            : null;
+
+          return field && item?.msg
+            ? `${field}: ${item.msg}`
+            : item?.msg || "Invalid input";
+        })
+        .join("\n");
+    }
+
+    throw new Error(message);
   }
+
   return body;
 }
 
@@ -1200,18 +1248,47 @@ async function renderProfile() {
 // ============================================================
 document.getElementById("login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
+
+  const usernameInput = document.getElementById("login-username");
+  const passwordInput = document.getElementById("login-password");
   const btn = document.getElementById("login-submit");
   const errEl = document.getElementById("login-error");
+
+  const username = usernameInput.value.trim();
+  const password = passwordInput.value;
+
+  errEl.textContent = "";
   errEl.classList.add("hidden");
+
+  // Client-side validation
+  if (!username && !password) {
+    errEl.textContent = "Username and password are required";
+    errEl.classList.remove("hidden");
+    usernameInput.focus();
+    return;
+  }
+
+  if (!username) {
+    errEl.textContent = "Username is required";
+    errEl.classList.remove("hidden");
+    usernameInput.focus();
+    return;
+  }
+
+  if (!password) {
+    errEl.textContent = "Password is required";
+    errEl.classList.remove("hidden");
+    passwordInput.focus();
+    return;
+  }
+
   btn.disabled = true;
   btn.textContent = "Signing in…";
+
   try {
-    await login(
-      document.getElementById("login-username").value,
-      document.getElementById("login-password").value,
-    );
+    await login(username, password);
   } catch (e) {
-    errEl.textContent = e.message;
+    errEl.textContent = e.message || "Unable to sign in";
     errEl.classList.remove("hidden");
   } finally {
     btn.disabled = false;
