@@ -51,9 +51,6 @@ def validate_setting(key: str, value):
         "telegram.enabled",
         "telegram.notifications_enabled",
         "telegram.admin_chat_id",
-        "system.maintenance_mode",
-        "system.timezone",
-        "system.log_retention_days",
     }
 
     if key not in allowed_settings:
@@ -67,7 +64,6 @@ def validate_setting(key: str, value):
         "notifications.enabled",
         "telegram.enabled",
         "telegram.notifications_enabled",
-        "system.maintenance_mode",
     }
 
     if key in boolean_settings:
@@ -88,7 +84,6 @@ def validate_setting(key: str, value):
         "notifications.batch_size": (1, 100),
         "notifications.retry_delay_seconds": (0, 86400),
         "notifications.max_attempts": (1, 20),
-        "system.log_retention_days": (1, 3650),
     }
 
     if key in integer_limits:
@@ -129,14 +124,6 @@ def validate_setting(key: str, value):
                 ),
             )
 
-        return
-
-    if key == "system.timezone":
-        if not isinstance(value, str) or not value.strip():
-            raise HTTPException(
-                status_code=400,
-                detail="system.timezone must be a non-empty string",
-            )
         return
 
 app.add_middleware(

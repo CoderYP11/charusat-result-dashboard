@@ -8,6 +8,7 @@
 const API_BASE = "/api";
 
 
+
 // ============================================================
 // STATE
 // ============================================================
@@ -227,7 +228,6 @@ const PAGE_TITLES = {
   notifications: "Notifications",
   subscribers: "Subscribers",
   logs: "Logs",
-  settings: "Settings",
   admins: "Admins",
   health: "System Health",
   profile: "Profile",
@@ -241,7 +241,6 @@ const RENDERERS = {
   notifications: renderNotifications,
   subscribers: renderSubscribers,
   logs: renderLogs,
-  settings: renderSettings,
   admins: renderAdmins,
   health: renderHealth,
   profile: renderProfile,
@@ -1021,48 +1020,6 @@ async function renderLogs() {
     } catch (e) {
       toast(e.message, "error");
     }
-  }
-}
-
-// ============================================================
-// PAGE: SETTINGS (system-level; crawler/telegram/notifications live on their own pages)
-// ============================================================
-async function renderSettings() {
-  const mount = document.getElementById("page-content");
-  try {
-    const s = await get("/settings?prefix=system.");
-    mount.innerHTML = `
-      <div class="card">
-        <h4>System</h4>
-        <div class="form-row"><div><div class="row-label">Maintenance mode</div><div class="row-desc">Pauses admin-visible operations messaging; does not stop the crawler/notification services themselves.</div></div>
-          <label class="toggle"><input type="checkbox" id="sys-maint" ${s["system.maintenance_mode"] ? "checked" : ""}/><span class="slider"></span></label></div>
-        <div class="form-row"><div class="row-label">Timezone</div><input type="text" id="sys-tz" value="${escapeHtml(s["system.timezone"] ?? "")}" /></div>
-        <div class="form-row"><div class="row-label">Log retention (days)</div><input type="number" id="sys-retention" value="${s["system.log_retention_days"]}" /></div>
-        <div class="form-row"><div></div><button class="btn btn-ghost" id="save-system-settings">Save changes</button></div>
-      </div>
-      <p class="text-dim">Crawler settings live on the <a href="#crawler" style="color:var(--signal-amber)">Crawler</a> page. Telegram and notification-worker settings live on their own pages.</p>
-    `;
-    document.getElementById("save-system-settings").onclick = async () => {
-      try {
-        await Promise.all([
-          patch("/settings/system.maintenance_mode", {
-            value: document.getElementById("sys-maint").checked,
-          }),
-          patch("/settings/system.timezone", {
-            value: document.getElementById("sys-tz").value,
-          }),
-          patch("/settings/system.log_retention_days", {
-            value: Number(document.getElementById("sys-retention").value),
-          }),
-        ]);
-        toast("Settings saved");
-        renderSettings();
-      } catch (e) {
-        toast(e.message, "error");
-      }
-    };
-  } catch (e) {
-    mount.innerHTML = `<p class="error-text">${escapeHtml(e.message)}</p>`;
   }
 }
 
